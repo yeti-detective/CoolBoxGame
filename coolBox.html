@@ -1,0 +1,193 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title>Cool Box</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script>
+            window.onload = function(){
+                var lives = 5;
+                document.addEventListener('keydown', (event)=>{
+                    var key = event.key;
+                    fireKeyAction(key, true);
+                });
+
+                document.addEventListener('keyup', (event) =>{
+                    var key = event.key;
+                    fireKeyAction(key, false);
+                });
+
+                var screen = document.getElementById("screen");
+                var ground = document.getElementById("ground");
+                var player = document.getElementById("player");
+                // var enemy = document.getElementById("enemy");
+
+                // media files
+                var ouch = new Audio("ouch.mp3");
+                var finalOuch = new Audio("finalOuch.mp3");
+
+                var height = 400,
+                    width = 700,
+                    playerHeight = 50,
+                    playerWidth = 50,
+                    eSpeed = 2,
+                    speed = 5,
+                    jump = 170,
+                    grav = 4;
+
+                screen.style.width = width;
+                screen.style.height = height;
+                ground.style.x2 = width;
+
+                var worldData = {
+                    "player": {
+                        "x": Math.floor(width/2) - Math.floor(playerWidth / 2),
+                        "y": height - playerHeight
+                    },
+                    "keysDown": [],
+                    "enemy": {
+                        "x": 0,
+                        "y": 350
+                    }
+                }
+
+                function isKeyDown(keyName) {
+                    return worldData.keysDown.indexOf(keyName) !== -1
+                }
+
+                function update() {
+                    player.style.x = worldData.player.x;
+                    player.style.y = worldData.player.y;
+                    // enemy.style.x = worldData.enemy.x;
+                    // enemy.style.y = worldData.enemy.y;
+                }
+
+                function boundaries(){
+                    if (worldData.player.x < 0){
+                        worldData.player.x += speed;
+                    }
+                    if (worldData.player.x > width - playerWidth){
+                        worldData.player.x -= speed;
+                    }
+
+                    if (worldData.player.y < playerHeight){
+                        worldData.player.y += speed;
+                    }
+                }
+
+                var interval = setInterval(() => {
+                    
+                    // walk left
+                    if(isKeyDown("ArrowLeft")){
+                        worldData.player.x -= speed;
+                    }
+
+                    // walk right
+                    if(isKeyDown("ArrowRight")){
+                        worldData.player.x += speed;
+                    }
+
+
+                    // jump
+                    if(isKeyDown("ArrowUp") && worldData.player.y > height - playerHeight - 3){
+                        worldData.player.y -= jump;
+                    }
+
+                    // enemy behavior
+                    /*var enemyDirection = true;
+                    if ( enemy.style.x > width - 50){
+                        enemyDirection == false;
+                    }
+                    if( enemyDirection ){
+                        worldData.enemy.x += eSpeed;
+                    }
+                    if( !enemyDirection){
+                        worldData.enemy.x -= eSpeed;
+                    }
+
+                    if( enemy.style.x == player.style.x && player.style.y < height - (playerHeight * 2)){
+                        ouch.play();
+                    }*/
+
+                    // gravity
+                    if(worldData.player.y < height - playerHeight){
+                        worldData.player.y += grav;
+                    }
+
+                    // cactus ouch
+                    if (worldData.player.y > 280 && worldData.player.x > 400 && worldData.player.x < 470){
+                        lives -= 1;
+                        if(lives >= 1) {ouch.play()}else{finalOuch.play()};
+                        worldData.player.y = 350;
+                        worldData.player.x = 250;
+                    }
+
+                    $("#lives").html(lives);
+
+                    if(lives == 0){
+                        $("#container").html("<h1>YOU LOSE!</h1><br><a href=\"file://home/yeti-d/webdevPractice/coolBox.html\">reload</a>");
+                        var deathMusic = new Audio('wereWolfRoar.mp3');
+                        deathMusic.play();
+                        lives -= 1;
+                    }
+
+                    boundaries();
+
+                    console.log("x-pos = " + worldData.player.x);
+                    console.log("y-pos = " + worldData.player.y);
+
+                    update();
+                }, 30);
+
+                function fireKeyAction(key, isDown){
+                    var keysDown = worldData.keysDown;
+
+                    switch(key){
+                        case 'ArrowLeft':
+                        case 'ArrowRight':
+                        case 'ArrowUp':
+                        case 'ArrowDown':
+                            if (isDown) {
+
+                                if (keysDown.indexOf(key) === -1) {
+                                    keysDown.push(key);
+                                }
+
+                            } else {
+                               keysDown.splice(keysDown.indexOf(key), 1); 
+                            }
+                    }
+                }
+            }
+        </script>
+        <style>
+            body {
+                background-color: #9376AC;
+            }
+
+            #container {
+                width: 100%;
+                text-align: center;
+            }
+
+            svg {
+                margin: auto;
+            }
+
+            #cactus {
+                background-color: #FDFCFF; 
+            }
+        </style>
+    </head>
+    <body>
+    <div id="container">
+        <h1>Jude & Dad's Cool Box Game</h1>
+        <h3>lives: <span id="lives"></span></h3>
+        <svg id="screen">
+            <line id="ground" x1="0" y1="400" x2="700" y2="400" stroke="green" stroke-width="4" />
+            <rect id="player" width="50" height="50" />
+            <!--<rect id="enemy" width="50" height="50" fill-opacity="0" stroke-opacity="1" stroke="red" /> -->
+            <rect id="cactus" width="20" height="70" x="450" y="330" />
+        </svg>
+    </div>
+    </body>
+</html>

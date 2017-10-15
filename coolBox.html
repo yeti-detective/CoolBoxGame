@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
     <head>
         <title>Cool Box</title>
@@ -16,14 +16,36 @@
                     fireKeyAction(key, false);
                 });
 
+                document.getElementById('leftArrow').addEventListener('click', (event) =>{
+                  fireKeyAction('ArrowLeft', true)
+                  setTimeout(() => {
+                    fireKeyAction('ArrowLeft', false)
+                  }, 250)
+
+                })
+
+                document.getElementById('rightArrow').addEventListener('click', (event) =>{
+                  fireKeyAction('ArrowRight', true)
+                  setTimeout(() => {
+                    fireKeyAction('ArrowRight', false)
+                  }, 250)
+                })
+
+                document.getElementById('jump').addEventListener('click', (event) =>{
+                  fireKeyAction('ArrowUp', true)
+                  setTimeout(() => {
+                    fireKeyAction('ArrowUp', false)
+                  }, 250)
+                })
+
                 var screen = document.getElementById("screen");
                 var ground = document.getElementById("ground");
                 var player = document.getElementById("player");
                 // var enemy = document.getElementById("enemy");
 
                 // media files
-                var ouch = new Audio("ouch.mp3");
-                var finalOuch = new Audio("finalOuch.mp3");
+                var ouch = new Audio("https://dl.dropbox.com/s/psdkgefjczo48k3/ouch.mp3?dl=0");
+                var finalOuch = new Audio("https://dl.dropbox.com/s/ghfnmdm7g6klz21/finalOuch.mp3?dl=0");
 
                 var height = 400,
                     width = 700,
@@ -75,7 +97,7 @@
                 }
 
                 var interval = setInterval(() => {
-                    
+
                     // walk left
                     if(isKeyDown("ArrowLeft")){
                         worldData.player.x -= speed;
@@ -124,16 +146,13 @@
                     $("#lives").html(lives);
 
                     if(lives == 0){
-                        $("#container").html("<h1>YOU LOSE!</h1><br><a href=\"file://home/yeti-d/webdevPractice/coolBox.html\">reload</a>");
+                        $("#container").html("<h1>YOU LOSE!</h1><br><a href=\"./coolBox.html\">reload</a>");
                         var deathMusic = new Audio('wereWolfRoar.mp3');
                         deathMusic.play();
                         lives -= 1;
                     }
 
                     boundaries();
-
-                    console.log("x-pos = " + worldData.player.x);
-                    console.log("y-pos = " + worldData.player.y);
 
                     update();
                 }, 30);
@@ -153,11 +172,12 @@
                                 }
 
                             } else {
-                               keysDown.splice(keysDown.indexOf(key), 1); 
+                               keysDown.splice(keysDown.indexOf(key), 1);
                             }
                     }
                 }
             }
+
         </script>
         <style>
             body {
@@ -169,6 +189,36 @@
                 text-align: center;
             }
 
+            #leftArrow {
+              height: 0;
+              width: 0;
+              border-top: 50px solid transparent;
+              border-bottom: 50px solid transparent;
+              border-right: 100px solid #000;
+              display: inline-block;
+            }
+
+            #rightArrow {
+              height: 0;
+              width: 0;
+              border-top: 50px solid transparent;
+              border-bottom: 50px solid transparent;
+              border-left: 100px solid #000;
+              display: inline-block;
+            }
+
+            #jump {
+              height: 100px;
+              width: 100px;
+              background: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+
+            #controller {
+              width: 100%;
+              text-align: center;
+            }
 
         </style>
     </head>
@@ -182,6 +232,11 @@
             <!--<rect id="enemy" width="50" height="50" fill-opacity="0" stroke-opacity="1" stroke="red" /> -->
             <rect id="cactus" width="20" height="70" x="450" y="330" />
         </svg>
-    </div>
+        <div id="controller">
+          <div id="leftArrow"></div>
+          <div id="jump"></div>
+          <div id="rightArrow"></div>
+        </div>
+      </div>
     </body>
 </html>
